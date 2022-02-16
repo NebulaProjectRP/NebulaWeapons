@@ -31,14 +31,18 @@ function SWEP:Initialize()
 end
 
 SWEP.RollLerp = 0
+SWEP.PitchLerp = 0
 function SWEP:CalcView(ply, pos, angles, fov)
-    if (self.RollLerp != 0) then
+    if (self.RollLerp != 0 or self.PitchLerp != 0) then
         self.RollLerp = math.Approach(self.RollLerp, 0, 1)
-        if (self.RollLerp == 0) then
+        self.PitchLerp = math.Approach(self.PitchLerp, 0, 1)
+        if (self.RollLerp == 0 and self.PitchLerp == 0) then
             self.RollLerp = 0
+            self.PitchLerp = 0
             return
         end
         angles.r = self.RollLerp
+        angles.p = self.PitchLerp
         return {
             angles = angles
         }
@@ -57,23 +61,54 @@ function SWEP:GetRopeOrigin()
     return pos
 end
 
-local cabbleMat = Material("cable/cable_lit")
-local quality = 32
+local cabbleMat = Material("metal/metaltruss002a")
 SWEP.LerpedRope = {}
 SWEP.Quadratic = 0
 function SWEP:PostDrawViewModel(vm, ply, wep)
 
-    if not IsValid(self:GetController()) then return end
-    if (self.TrajectoryIndex < 1) then return end
+    //
     local muzzpos, muzzang = self:GetRopeOrigin()
+    self:DrawLazyRope(muzzpos)
 
-    self:DrawRope(muzzpos)    
+    if (self.TrajectoryIndex < 1) then return end
+    if not IsValid(self:GetController()) then return end
+    self:DrawRope(muzzpos)
+end
+
+local matGrab = surface.GetTextureID("effects/freeze_unfreeze")
+local matAlpha = 0
+local lastPos = Vector(0, 0, 0)
+local canGrab = false
+function SWEP:DrawHUD()
+
+    local tr = util.TraceLine({
+        start = self:GetOwner():GetShootPos(),
+        endpos = self:GetOwner():GetShootPos() + self:GetOwner():GetAimVector() * (self.UnitsPerTick * self.Ticks),
+        filter = self:GetOwner(),
+        mask = MASK_SHOT_HULL
+    })
+
+    if (tr.HitPos and tr.HitWorld) then
+        lastPos = tr.HitPos:ToScreen()
+        canGrab = true
+        debugoverlay.Cross(tr.HitPos, 32, FrameTime() * 2, Color(0, 255, 0), true)
+    elseif (canGrab) then
+        canGrab = false
+    end
+
+    surface.SetTexture(matGrab)
+    surface.SetDrawColor(255, 255, 255, matAlpha)
+    matAlpha = Lerp(FrameTime() * 10, matAlpha, (canGrab and not self:GetIsHooked()) and 255 or 0)
+    local power = matAlpha / 255
+    surface.DrawTexturedRectRotated(lastPos.x, lastPos.y, 32 * power, 32 * power, 0)
 end
 
 function SWEP:DrawRope(pos)
     local maxRopes = self.TrajectoryIndex
+    local pivot = self:GetController():GetController()
+
     for k, v in pairs(self.LerpedRope) do
-        local power = (k) / maxRopes
+        local power = (k - 1) / maxRopes
         local targetLerp = Lerp(power, pos, self:GetController():GetController():GetPos())
         local factor = .5 + math.abs(power / 2 - 1)
         self.LerpedRope[k] = LerpVector(factor, self.LerpedRope[k], targetLerp)
@@ -81,19 +116,70 @@ function SWEP:DrawRope(pos)
         debugoverlay.Cross(self.Trajectory[k][2], 32, FrameTime() * 2, Color(0, 255, 0), true)
     end
 
-    debugoverlay.Axis(pos, self:GetOwner():EyeAngles(), 16, 5, true)
-    debugoverlay.Axis(self:GetController():GetController():GetPos(), self:GetController():GetController():GetAngles(), 16, FrameTime() * 4, true)
+    local target = pivot:GetPos() - pivot:GetForward() * 4
+
+    debugoverlay.Cross(self.LerpedRope[maxRopes], 8, FrameTime() * 2, Color(255, 255, 255), true)
+    //debugoverlay.Axis(self:GetController():GetController():GetPos(), self:GetController():GetController():GetAngles(), 16, FrameTime() * 4, true)
     render.SetColorModulation(1, 1, 1)
     render.SetMaterial(cabbleMat)
     render.StartBeam(self.TrajectoryIndex + 1)
     
     render.AddBeam(pos, 2, .5, color_white)
     render.SetBlend(1)
-    for k, pos in pairs(self.LerpedRope) do
+    for k = 1, #self.LerpedRope - 1 do
+        local pos = self.LerpedRope[k]
         render.AddBeam(pos, 2, k, color_white)
     end
+    render.AddBeam(target, 2, 1, color_white)
     render.SetBlend(1)
     render.EndBeam()
+end
+
+SWEP.LazyRopePoints = {}
+local quality = 40
+local smoothExp = 4
+function SWEP:DrawLazyRope(origin)
+    local ply = self:GetOwner()
+    if (self:GetIsHooked() or self.TrajectoryIndex == 0 or not input.IsMouseDown(MOUSE_LEFT)) then
+        if (not table.IsEmpty(self.LazyRopePoints)) then
+            self.LazyRopePoints = {}
+        end
+        return
+    end
+
+    local max = self.TrajectoryIndex * smoothExp
+    render.SetMaterial(cabbleMat)
+    render.StartBeam(max)
+
+    local lastPos = origin
+    if (self.TrajectoryIndex != self.LastRope) then
+        for k = 1, smoothExp do
+            table.insert(self.LazyRopePoints, LerpVector(k / smoothExp, lastPos, self.Trajectory[self.TrajectoryIndex][2]))
+        end
+        self.LastRope = self.LastRope + 1
+    end
+
+    local res = 2
+    local dist = self.Trajectory[self.TrajectoryIndex][2]:Distance(origin)
+    render.AddBeam(origin, 2, 0, color_white)
+    for k, v in pairs(self.Trajectory) do
+        for i = 1, smoothExp do
+            local cursor = math.ceil(smoothExp * k + i)
+            if not self.LazyRopePoints[cursor] then continue end
+            self.LazyRopePoints[cursor] = LerpVector(FrameTime() * (2 * res), self.LazyRopePoints[cursor], origin + ply:GetAimVector() * (dist * (res / max)))
+            render.AddBeam(self.LazyRopePoints[cursor], 2, i / smoothExp + .25, color_white)
+            res = res + 1
+        end
+    end
+
+    render.EndBeam()
+end
+
+function SWEP:CreateLazyRope()
+    local origin = self:GetRopeOrigin()
+    self.LazyRopePoints = {}
+    self.TotalNoise = 10
+    self.LastRope = 0
 end
 
 function SWEP:DrawWorldModel()

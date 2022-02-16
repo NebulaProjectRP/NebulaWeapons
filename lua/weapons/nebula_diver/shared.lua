@@ -6,21 +6,20 @@ SWEP.Spawnable = true
 SWEP.ViewModel = "models/weapons/c_pistol.mdl"
 SWEP.WorldModel = "models/weapons/w_pistol.mdl"
 SWEP.UseHands = true
-SWEP.UnitsPerTick = 96
+SWEP.UnitsPerTick = 112
 
 DEFINE_BASECLASS("nebula_sck")
 
 function SWEP:SetupDataTables()
     self:NetworkVar("Bool", 0, "IsHooked")
     self:NetworkVar("Bool", 1, "IsMoving")
-    self:NetworkVar("Float", 0, "HitStamp")
-    self:NetworkVar("Float", 1, "Radius")
-    self:NetworkVar("Vector", 0, "HitPos")
-    self:NetworkVar("Vector", 1, "TravelDir")
+    self:NetworkVar("Bool", 2, "Refract")
     self:NetworkVar("Entity", 0, "Controller")
 end
 
 function SWEP:PrimaryAttack()
+
+    if not IsFirstTimePredicted() then return end
     self.Weapon:SendWeaponAnim(ACT_VM_PRIMARYATTACK)
 	self.Owner:SetAnimation(PLAYER_ATTACK1)
     self.HasThrown = true
@@ -32,15 +31,29 @@ function SWEP:PrimaryAttack()
 end
 
 function SWEP:SecondaryAttack()
+    if (not self:GetIsHooked()) then return end
+
     self.Weapon:SendWeaponAnim(ACT_VM_RELOAD)
 	self.Owner:SetAnimation(PLAYER_ATTACK1)
-	
+    
 	self.Idle = 0
 	self.IdleTimer = CurTime() + self.Owner:GetViewModel():SequenceDuration()
     self:SetNextSecondaryFire(CurTime() + .5)
+
+    self:SetRefract(true)
 end
 
 function SWEP:Think()
+
+    if (self:GetIsHooked() and self:GetRefract() and IsValid(self:GetController())) then
+        if (self:GetController().GetDistance) then
+            self:GetController():SetDistance(math.max(self:GetController():GetDistance() - FrameTime() * 500, 32))
+        end
+        if (not self:GetOwner():KeyDown(IN_ATTACK2)) then
+            self:SetRefract(false)
+        end
+    end
+
     if self.Idle == 0 and self.IdleTimer <= CurTime() then
 		if SERVER then
 			self.Weapon:SendWeaponAnim( ACT_VM_IDLE )
@@ -53,6 +66,7 @@ local lastTimer = 0
 SWEP.TimerCreated = {}
 SWEP.Trajectory = {}
 SWEP.TrajectoryIndex = 0
+SWEP.Ticks = 10
 function SWEP:StartAttack()
     local lastPos = self.Owner:GetShootPos()
     local aimVector = self.Owner:GetAimVector()
@@ -65,11 +79,16 @@ function SWEP:StartAttack()
     self.Trajectory = {{1, self:GetOwner():GetShootPos()}}
     self.TrajectoryIndex = 1
 
+    if CLIENT then
+        self:CreateLazyRope()
+    end
+
     local plaidCue = false
-    for k = 1, 10 do
+    for k = 1, self.Ticks do
         local tag = sid .. "_Grappling_" .. lastTimer
         self.TimerCreated[k] = tag
-        timer.Create(tag, k / 20, 1, function()
+        local i = 0
+        timer.Create(tag, k / (self.Ticks * 2), 1, function()
             if SERVER and not plaidCue then
                 if self.loopingCue then
                     self:StopLoopingSound(self.loopingCue)
@@ -108,7 +127,7 @@ function SWEP:StartAttack()
                         table.insert(self.LerpedRope, v[2])
                     end
                 end
-                debugoverlay.Cross(tr.HitPos, 32, 5, Color(255, 0, 0), true)
+                //debugoverlay.Cross(tr.HitPos, 32, 5, Color(255, 0, 0), true)
                 for k, v in pairs(self.TimerCreated) do
                     timer.Remove(v)
                 end
@@ -116,6 +135,15 @@ function SWEP:StartAttack()
 
             table.insert(self.Trajectory, {k, tr.HitPos})
             self.TrajectoryIndex = self.TrajectoryIndex + 1
+            if (self.TrajectoryIndex > self.Ticks) then
+                if CLIENT then
+                    self.TrajectoryIndex = 0
+                    self.LazyRopePoints = {}
+                    self.LastRope = 0
+                end
+                self:Reload()
+            end
+            //MsgN(self.TrajectoryIndex)
         end)
         lastTimer = lastTimer + 1
     end
@@ -172,6 +200,5 @@ function SWEP:Reload()
     if (self.loopingCue) then
         self:StopLoopingSound(self.loopingCue)
         self.loopingCue = nil
-        MsgN("Stopping sound")
     end
 end

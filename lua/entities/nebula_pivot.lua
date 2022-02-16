@@ -41,6 +41,18 @@ end
 
 ENT.LerpedSpeed = Vector(0, 0, 0)
 function ENT:Move(mv)
+    if SERVER then
+        if not IsValid(self:GetOwner():GetActiveWeapon()) then
+            self:Remove()
+            return
+        end    
+
+        if (self:GetOwner():GetActiveWeapon():GetClass() != "nebula_diver") then
+            self:Remove()
+            return
+        end
+    end
+    
     local ply = self:GetOwner()
     local side = mv:GetSideSpeed()
     local forw = mv:GetForwardSpeed()
@@ -53,11 +65,14 @@ function ENT:Move(mv)
     self.LerpedSpeed = LerpVector(FrameTime() * 10, self.LerpedSpeed, Vector(self.sideSpeed, self.forwSpeed , 0))
     local vel = self:GetVelocity()
     
+    if (ply:GetActiveWeapon():GetRefract()) then
+        vel = vel + (self:GetController():GetPos() - self:GetPos()):GetNormalized() * 500
+    end
 
     if (not self:GetOwner():KeyDown(IN_ATTACK)) then
         self:GetOwner():GetActiveWeapon():Reload()
-        self:GetOwner():SetVelocity(vel * .25)
-        mv:SetVelocity(vel * .25)
+        self:GetOwner():SetVelocity(vel * .5)
+        mv:SetVelocity(vel * .5)
     end
     return true
 end
@@ -74,6 +89,7 @@ function ENT:OnRemove()
             owner:SetParent(nil)
             owner:SetPos(self:GetPos())
             angles.r = 0
+            angles.p = 0
             owner:SetEyeAngles(angles)
         end
 
@@ -86,6 +102,7 @@ function ENT:OnRemove()
         end
     else
         owner:GetActiveWeapon().RollLerp = self:GetAngles().r
+        owner:GetActiveWeapon().PitchLerp = self:GetAngles().p
     end
 end
 
@@ -99,8 +116,10 @@ function ENT:Setup(ply)
     local normal = (self:GetPos() - ply:GetShootPos()):GetNormalized()
     self:SetDistance(ply:GetShootPos():Distance(self:GetTarget()))
     if SERVER then
+        ply:SetEyeAngles(self:WorldToLocalAngles(ply:EyeAngles()))
         ply:SetParent(self)
-        ply:SetEyeAngles(Angle(0, 0, 0))
+        
+        
         local controller = ents.Create("prop_dynamic")
         controller:SetModel("models/weapons/c_models/c_grapple_proj/c_grapple_proj.mdl")
         controller:SetPos(self:GetTarget() + self.Normal * -4)
@@ -152,5 +171,5 @@ function ENT:PhysicsSimulate( phys, deltatime )
 end
 
 function ENT:Draw()
-    self:DrawModel()
+    //self:DrawModel()
 end
