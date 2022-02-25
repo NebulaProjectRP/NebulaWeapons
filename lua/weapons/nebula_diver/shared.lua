@@ -46,6 +46,10 @@ end
 function SWEP:Think()
 
     if (self:GetIsHooked() and self:GetRefract() and IsValid(self:GetController())) then
+        local tr = util.QuickTrace(self:GetOwner():GetShootPos(), self:GetOwner():GetAimVector() * 48, {self:GetOwner(), self:GetController()})
+        if (tr.Hit) then
+            return
+        end
         if (self:GetController().GetDistance) then
             self:GetController():SetDistance(math.max(self:GetController():GetDistance() - FrameTime() * 500, 32))
         end
