@@ -1,0 +1,5 @@
+materials/
+sound/
+*.dx80.vtx
+*.sw.vtx
+*.xbox.vtx
