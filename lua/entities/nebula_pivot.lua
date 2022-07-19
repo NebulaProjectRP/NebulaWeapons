@@ -6,6 +6,7 @@ ENT.Author = "Gonzalolog"
 
 function ENT:SetupDataTables()
     self:NetworkVar("Entity", 0, "Controller")
+    self:NetworkVar("Entity", 1, "Weapon")
     self:NetworkVar("Vector", 0, "Target")
     self:NetworkVar("Float", 0, "Distance")
 end
@@ -38,13 +39,13 @@ ENT.LerpedSpeed = Vector(0, 0, 0)
 
 function ENT:Move(mv)
     if SERVER then
-        if not IsValid(self:GetOwner():GetActiveWeapon()) then
+        if not IsValid(self:GetWeapon()) then
             self:Remove()
 
             return
         end
 
-        if !self:GetOwner():GetActiveWeapon().IsDiver then
+        if !self:GetWeapon().IsDiver then
             self:Remove()
 
             return
@@ -60,13 +61,17 @@ function ENT:Move(mv)
     self.forwSpeed = forw / 10
     self.LerpedSpeed = LerpVector(FrameTime() * 10, self.LerpedSpeed, Vector(self.sideSpeed, self.forwSpeed, 0))
     local vel = self:GetVelocity()
+    local diver = self:GetWeapon()
+    if not IsValid(diver) then
+        return
+    end
 
-    if ply:GetActiveWeapon():GetRefract() then
+    if diver:GetRefract() then
         vel = vel + (self:GetController():GetPos() - self:GetPos()):GetNormalized() * 500
     end
 
     if not self:GetOwner():KeyDown(IN_ATTACK) then
-        self:GetOwner():GetActiveWeapon():Reload()
+        diver:Reload()
         self:GetOwner():SetVelocity(vel * .5)
         mv:SetVelocity(vel * .5)
     end
@@ -87,16 +92,16 @@ function ENT:OnRemove()
             owner:SetEyeAngles(angles)
         end
 
-        if owner:GetActiveWeapon().loopingCue then
-            owner:GetActiveWeapon():StopLoopingSound(owner:GetActiveWeapon().loopingCue)
+        if self:GetWeapon().loopingCue then
+            self:GetWeapon():StopLoopingSound(self:GetWeapon().loopingCue)
         end
 
         if IsValid(self:GetController()) then
             self:GetController():Remove()
         end
     else
-        owner:GetActiveWeapon().RollLerp = self:GetAngles().r
-        owner:GetActiveWeapon().PitchLerp = self:GetAngles().p
+        self:GetWeapon().RollLerp = self:GetAngles().r
+        self:GetWeapon().PitchLerp = self:GetAngles().p
     end
 end
 
@@ -108,7 +113,7 @@ end
 
 function ENT:Setup(ply)
     self:SetDistance(ply:GetShootPos():Distance(self:GetTarget()))
-
+    self:SetWeapon(ply:GetActiveWeapon())
     if SERVER then
         ply:SetEyeAngles(self:WorldToLocalAngles(ply:EyeAngles()))
         ply:SetParent(self)
@@ -160,7 +165,7 @@ function ENT:PhysicsSimulate(phys, deltatime)
 
     if not self.Disposed and tr.HitWorld then
         self.Disposed = true
-        self:GetOwner():GetActiveWeapon():Reload()
+        self:GetWeapon():Reload()
     end
 end
 

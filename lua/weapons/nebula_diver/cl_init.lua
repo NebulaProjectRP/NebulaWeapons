@@ -25,13 +25,26 @@ SWEP.WElements = {
 }
 
 DEFINE_BASECLASS("nebula_sck")
-
 function SWEP:Initialize()
     self.VElements.v_element.color = self.Tint or color_white
     self.WElements.w_element.color = self.Tint or color_white
     BaseClass.Initialize( self )
     hook.Add("CalcView", self, self.CalcView)
+
+    hook.Add("PlayerButtonDown", self, function(s, ply, btn)
+        if not IsFirstTimePredicted() then return end
+        if (!vgui.CursorVisible() and btn == KEY_G and ply:HasWeapon(s:GetClass())) then
+            if (ply:GetActiveWeapon() == s) then
+                RunConsoleCommand("lastinv")
+            else
+                input.SelectWeapon(self)
+            end
+            return false
+        end
+    end)
 end
+
+
 
 SWEP.RollLerp = 0
 SWEP.PitchLerp = 0

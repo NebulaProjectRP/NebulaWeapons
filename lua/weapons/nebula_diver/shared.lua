@@ -9,6 +9,7 @@ SWEP.UnitsPerTick = 112
 SWEP.IsDiver = true
 DEFINE_BASECLASS("nebula_sck")
 
+
 function SWEP:SetupDataTables()
     self:NetworkVar("Bool", 0, "IsHooked")
     self:NetworkVar("Bool", 1, "IsMoving")
@@ -60,7 +61,6 @@ function SWEP:Think()
         self.Idle = 1
     end
 end
-
 local lastTimer = 0
 SWEP.TimerCreated = {}
 SWEP.Trajectory = {}
@@ -167,6 +167,7 @@ function SWEP:StartAttack()
 end
 
 function SWEP:OnRemove()
+    self:Reload()
     for k, v in pairs(self.TimerCreated) do
         timer.Remove(v)
     end
@@ -175,6 +176,7 @@ end
 function SWEP:Deploy()
     BaseClass.Deploy(self)
     self:SendWeaponAnim(ACT_VM_DRAW)
+    AvailableGrapple = false
     self.Idle = 0
     self.IdleTimer = CurTime() + self:GetOwner():GetViewModel():SequenceDuration()
 
@@ -188,6 +190,7 @@ function SWEP:Holster()
         timer.Remove(v)
     end
 
+    AvailableGrapple = true
     self.HasThrown = nil
     self.TimerCreated = {}
 end
@@ -221,3 +224,4 @@ function SWEP:Reload()
         self.loopingCue = nil
     end
 end
+

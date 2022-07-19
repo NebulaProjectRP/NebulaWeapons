@@ -8,5 +8,4 @@ SWEP.WorldModel = "models/weapons/w_pistol.mdl"
 SWEP.UseHands = true
 SWEP.UnitsPerTick = 112
 SWEP.Tint = Color(0, 255, 0)
-
 DEFINE_BASECLASS("nebula_diver")
