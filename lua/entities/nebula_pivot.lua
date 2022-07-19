@@ -1,8 +1,6 @@
 AddCSLuaFile()
-
 ENT.Base = "base_anim"
 ENT.Type = "anim"
-
 ENT.PrintName = "Heroic Swing's Pivot"
 ENT.Author = "Gonzalolog"
 
@@ -19,8 +17,8 @@ function ENT:Initialize()
         self:SetSolid(SOLID_VPHYSICS)
         self:SetMoveType(MOVETYPE_VPHYSICS)
         self:GetPhysicsObject():Wake()
-
         self:StartMotionController()
+
         self.ShadowParams = {
             maxangular = 5000,
             maxangulardamp = 10000,
@@ -29,62 +27,58 @@ function ENT:Initialize()
             dampfactor = 0.8,
             teleportdistance = 200,
         }
-
     end
 
-    hook.Add("Move", self, function(self, ply, mv)
-        if (ply == self:GetOwner()) then
-            return self:Move(mv)
-        end
+    hook.Add("Move", self, function(s, ply, mv)
+        if ply == self:GetOwner() then return self:Move(mv) end
     end)
 end
 
 ENT.LerpedSpeed = Vector(0, 0, 0)
+
 function ENT:Move(mv)
     if SERVER then
         if not IsValid(self:GetOwner():GetActiveWeapon()) then
             self:Remove()
-            return
-        end    
 
-        if (self:GetOwner():GetActiveWeapon():GetClass() != "nebula_diver") then
+            return
+        end
+
+        if !self:GetOwner():GetActiveWeapon().IsDiver then
             self:Remove()
+
             return
         end
     end
-    
+
     local ply = self:GetOwner()
     local side = mv:GetSideSpeed()
     local forw = mv:GetForwardSpeed()
     mv:SetForwardSpeed(0)
     mv:SetSideSpeed(0)
-
     self.sideSpeed = side / 10
     self.forwSpeed = forw / 10
-
-    self.LerpedSpeed = LerpVector(FrameTime() * 10, self.LerpedSpeed, Vector(self.sideSpeed, self.forwSpeed , 0))
+    self.LerpedSpeed = LerpVector(FrameTime() * 10, self.LerpedSpeed, Vector(self.sideSpeed, self.forwSpeed, 0))
     local vel = self:GetVelocity()
-    
-    if (ply:GetActiveWeapon():GetRefract()) then
+
+    if ply:GetActiveWeapon():GetRefract() then
         vel = vel + (self:GetController():GetPos() - self:GetPos()):GetNormalized() * 500
     end
 
-    if (not self:GetOwner():KeyDown(IN_ATTACK)) then
+    if not self:GetOwner():KeyDown(IN_ATTACK) then
         self:GetOwner():GetActiveWeapon():Reload()
         self:GetOwner():SetVelocity(vel * .5)
         mv:SetVelocity(vel * .5)
     end
+
     return true
 end
 
 function ENT:OnRemove()
-
     local owner = self:GetOwner()
 
     if SERVER then
         if IsValid(owner) then
-            local ang = self:GetAngles()
-            
             local angles = owner:EyeAngles()
             owner:SetParent(nil)
             owner:SetPos(self:GetPos())
@@ -93,7 +87,7 @@ function ENT:OnRemove()
             owner:SetEyeAngles(angles)
         end
 
-        if (owner:GetActiveWeapon().loopingCue) then
+        if owner:GetActiveWeapon().loopingCue then
             owner:GetActiveWeapon():StopLoopingSound(owner:GetActiveWeapon().loopingCue)
         end
 
@@ -113,23 +107,22 @@ function ENT:OnTakeDamage(dmg)
 end
 
 function ENT:Setup(ply)
-    local normal = (self:GetPos() - ply:GetShootPos()):GetNormalized()
     self:SetDistance(ply:GetShootPos():Distance(self:GetTarget()))
+
     if SERVER then
         ply:SetEyeAngles(self:WorldToLocalAngles(ply:EyeAngles()))
         ply:SetParent(self)
-        
-        
         local controller = ents.Create("prop_dynamic")
         controller:SetModel("models/weapons/c_models/c_grapple_proj/c_grapple_proj.mdl")
         controller:SetPos(self:GetTarget() + self.Normal * -4)
         controller:SetAngles(self.Normal:Angle())
         controller:Spawn()
-        self:SetController(controller)     
+        self:SetController(controller)
     end
 end
 
 ENT.FlyAngle = Angle(0, 0, 0)
+
 function ENT:CalculatePosition()
     local dist = self:GetDistance()
     local diff = (self:GetTarget() - self:GetPos()):GetNormalized():Angle()
@@ -143,19 +136,20 @@ function ENT:CalculateAngle()
     local diff = (self:GetTarget() - self:GetPos()):GetNormalized()
     local ang = diff:Angle()
     ang:RotateAroundAxis(ang:Forward(), self.FlyAngle.y / 2)
+
     return ang
 end
 
 ENT.Disposed = false
-function ENT:PhysicsSimulate( phys, deltatime )
-	self.ShadowParams.secondstoarrive = deltatime
-	self.ShadowParams.pos = self:CalculatePosition()
-	self.ShadowParams.angle = self:CalculateAngle()
-	self.ShadowParams.deltatime = deltatime
- 
+
+function ENT:PhysicsSimulate(phys, deltatime)
+    self.ShadowParams.secondstoarrive = deltatime
+    self.ShadowParams.pos = self:CalculatePosition()
+    self.ShadowParams.angle = self:CalculateAngle()
+    self.ShadowParams.deltatime = deltatime
     debugoverlay.Cross(self.ShadowParams.pos, 5, FrameTime() * 4, Color(255, 0, 0), true)
-	phys:ComputeShadowControl(self.ShadowParams)
- 
+    phys:ComputeShadowControl(self.ShadowParams)
+
     local tr = util.TraceHull({
         start = self:GetPos() + Vector(0, 0, 2),
         endpos = self:GetPos() + Vector(0, 0, 2),
@@ -164,12 +158,12 @@ function ENT:PhysicsSimulate( phys, deltatime )
         filter = {self, self:GetController(), self:GetOwner()},
     })
 
-    if (not self.Disposed and tr.HitWorld) then
+    if not self.Disposed and tr.HitWorld then
         self.Disposed = true
         self:GetOwner():GetActiveWeapon():Reload()
     end
 end
 
 function ENT:Draw()
-    //self:DrawModel()
 end
+--self:DrawModel()

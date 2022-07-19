@@ -169,6 +169,8 @@ function TFA.Attachments.Register(id, ATTACHMENT)
 		id = ATTACHMENT.ID
 	end
 
+	if id == nil then return end
+
 	assert(istable(ATTACHMENT), "Invalid attachment argument provided")
 	assert(isstring(id), "Invalid attachment ID provided")
 	local size = table.Count(ATTACHMENT)

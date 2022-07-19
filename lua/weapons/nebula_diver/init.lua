@@ -20,7 +20,7 @@ end
 
 
 hook.Add( "GetFallDamage", "NebulaRP.Hook", function( ply, speed )
-    if (IsValid(ply:GetActiveWeapon()) and ply:GetActiveWeapon():GetClass() == "nebula_diver") then
+    if (IsValid(ply:GetActiveWeapon()) and ply:GetActiveWeapon().IsDiver) then
         return 0
     end
 end )

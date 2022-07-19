@@ -6,6 +6,7 @@ local sndGrappleShoot	= Sound("weapons/grappling_hook_shoot.wav")
 local sndGrappleReel	= Sound("weapons/grappling_hook_reel_start.wav")
 local sndGrappleAbort	= Sound("weapons/grappling_hook_reel_stop.wav")
 
+SWEP.Tint = Color(255, 0, 0)
 SWEP.ViewModelBoneMods = {
 	["ValveBiped.Bip01_R_UpperArm"] = { scale = Vector(1, 1, 1), pos = Vector(9.892, -0.811, 2.532), angle = Angle(-10.782, -7.685, 14.444) },
 	["ValveBiped.square"] = { scale = Vector(0.009, 0.009, 0.009), pos = Vector(0, 0, 0), angle = Angle(0, 0, 0) },
@@ -14,18 +15,20 @@ SWEP.ViewModelBoneMods = {
 }
 
 SWEP.VElements = {
-	["v_element"] = { type = "Model", model = "models/weapons/c_models/c_grappling_hook/c_grappling_hook.mdl", bone = "ValveBiped.Bip01_R_Hand", rel = "", pos = Vector(3.032, 1.476, -1.58), angle = Angle(0, 0, 177.921), size = Vector(1, 1, 1), color = Color(255, 255, 255, 255), surpresslightning = false, material = "", skin = 0, bodygroup = {} },
+	["v_element"] = { type = "Model", model = "models/nebularp/grapple_hook.mdl", bone = "ValveBiped.Bip01_R_Hand", rel = "", pos = Vector(3.032, 1.476, -1.58), angle = Angle(0, 0, 177.921), size = Vector(1, 1, 1), color = Color(255, 255, 255, 255), surpresslightning = false, material = "", skin = 0, bodygroup = {} },
 	["v_element2"] = { type = "Model", model = "models/props_c17/pulleywheels_large01.mdl", bone = "ValveBiped.Bip01_R_Hand", rel = "", pos = Vector(9.571, 3.808, -1.502), angle = Angle(-1.657, 89.515, 0), size = Vector(0.09, 0.15, 0.15), color = Color(255, 255, 255, 255), surpresslightning = false, material = "mm_materials/zinc01_low2", skin = 0, bodygroup = {} },
 	["v_element3"] = { type = "Model", model = "models/props_c17/pulleywheels_large01.mdl", bone = "ValveBiped.Bip01_R_Hand", rel = "", pos = Vector(9.571, 3.808, -1.502), angle = Angle(-1.657, 89.515, 45), size = Vector(0.09, 0.15, 0.15), color = Color(255, 255, 255, 255), surpresslightning = false, material = "mm_materials/zinc01_low2", skin = 0, bodygroup = {} }
 }
 
 SWEP.WElements = {
-	["w_element"] = { type = "Model", model = "models/weapons/c_models/c_grappling_hook/c_grappling_hook.mdl", bone = "ValveBiped.Bip01_R_Hand", rel = "", pos = Vector(3.709, 1.886, -2), angle = Angle(0, 0, 180), size = Vector(1, 1, 1), color = Color(255, 255, 255, 255), surpresslightning = false, material = "", skin = 0, bodygroup = {} }
+	["w_element"] = { type = "Model", model = "models/nebularp/grapple_hook.mdl", bone = "ValveBiped.Bip01_R_Hand", rel = "", pos = Vector(3.709, 1.886, -2), angle = Angle(0, 0, 180), size = Vector(1, 1, 1), color = Color(255, 255, 255, 255), surpresslightning = false, material = "", skin = 0, bodygroup = {} }
 }
 
 DEFINE_BASECLASS("nebula_sck")
 
 function SWEP:Initialize()
+    self.VElements.v_element.color = self.Tint or color_white
+    self.WElements.w_element.color = self.Tint or color_white
     BaseClass.Initialize( self )
     hook.Add("CalcView", self, self.CalcView)
 end
@@ -57,7 +60,6 @@ function SWEP:GetRopeOrigin()
 
     local pos, ang = vm:GetBonePosition(self.bonecache)
     pos = pos + ang:Forward() * 24
-    debugoverlay.Cross(pos, 32, FrameTime() * 2, Color(0, 255, 0), true)
     return pos
 end
 
@@ -65,8 +67,6 @@ local cabbleMat = Material("metal/metaltruss002a")
 SWEP.LerpedRope = {}
 SWEP.Quadratic = 0
 function SWEP:PostDrawViewModel(vm, ply, wep)
-
-    //
     local muzzpos, muzzang = self:GetRopeOrigin()
     self:DrawLazyRope(muzzpos)
 
@@ -118,7 +118,6 @@ function SWEP:DrawRope(pos)
 
     local target = pivot:GetPos() - pivot:GetForward() * 4
 
-    debugoverlay.Cross(self.LerpedRope[maxRopes], 8, FrameTime() * 2, Color(255, 255, 255), true)
     //debugoverlay.Axis(self:GetController():GetController():GetPos(), self:GetController():GetController():GetAngles(), 16, FrameTime() * 4, true)
     render.SetColorModulation(1, 1, 1)
     render.SetMaterial(cabbleMat)
