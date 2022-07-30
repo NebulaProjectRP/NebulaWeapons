@@ -8,6 +8,8 @@ SWEP.Primary = {
 SWEP.Ammo = "none"
 SWEP.TravelTime = .5
 SWEP.SignalTime = 2
+SWEP.Ogyxen = 5
+
 SWEP.ViewModel = "models/weapons/nebularp/c_tpsniper.mdl"
 SWEP.ViewModelFlip = true
 SWEP.WorldModel = "models/weapons/nebularp/c_tpsniper.mdl"
@@ -15,6 +17,7 @@ SWEP.WorldModel = "models/weapons/nebularp/c_tpsniper.mdl"
 function SWEP:SetupDataTables()
     self:NetworkVar("Float", 0, "NextBullet")
     self:NetworkVar("Float", 1, "TPStamp")
+    self:NetworkVar("Float", 2, "Oxygen")
     self:NetworkVar("Bool", 0, "DoingTP")
     self:NetworkVar("Bool", 1, "Zooming")
     self:NetworkVar("Entity", 1, "Target")
@@ -47,6 +50,7 @@ function SWEP:Initialize()
 end
 
 function SWEP:PrimaryAttack()
+    if (self:GetOxygen() > CurTime()) then return end
     if (self:Clip1() <= 0) then return end
     self:SetNextBullet(CurTime() + self.Primary.ReloadRate)
 
@@ -99,8 +103,10 @@ function SWEP:Reload()
     local target = self:GetTarget()
     if not IsValid(target) then return end
     if (self:GetZooming()) then return end
+    if (self:GetTPStamp() > CurTime()) then return end
     if (self:Clip1() == 0) then return end
     self:SetTPStamp(CurTime() + self.TravelTime)
+    self:SetOxygen(CurTime() + self.Oxygen)
     self:SetDoingTP(true)
 
     self:EmitSound("weapons/deadmanstale/deadmanstaleperk.wav")
@@ -124,6 +130,7 @@ function SWEP:Reload()
 end
 
 function SWEP:SecondaryAttack()
+    if (self:GetOxygen() > CurTime()) then return end
     self:SetZooming(not self:GetZooming())
     if IsFirstTimePredicted() then
         if CLIENT then
