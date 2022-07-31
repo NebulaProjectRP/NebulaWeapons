@@ -21,12 +21,12 @@ function ENT:Initialize()
         self:StartMotionController()
 
         self.ShadowParams = {
-            maxangular = 5000,
-            maxangulardamp = 10000,
-            maxspeed = 1000,
-            maxspeeddamp = 1000,
-            dampfactor = 0.8,
-            teleportdistance = 200,
+            maxangular = 400,
+            maxangulardamp = 400,
+            maxspeed = 520,
+            maxspeeddamp = 520,
+            dampfactor = 1,
+            teleportdistance = 10000,
         }
     end
 
@@ -45,7 +45,7 @@ function ENT:Move(mv)
             return
         end
 
-        if !self:GetWeapon().IsDiver then
+        if not self:GetWeapon().IsDiver then
             self:Remove()
 
             return
@@ -62,9 +62,7 @@ function ENT:Move(mv)
     self.LerpedSpeed = LerpVector(FrameTime() * 10, self.LerpedSpeed, Vector(self.sideSpeed, self.forwSpeed, 0))
     local vel = self:GetVelocity()
     local diver = self:GetWeapon()
-    if not IsValid(diver) then
-        return
-    end
+    if not IsValid(diver) then return end
 
     if diver:GetRefract() then
         vel = vel + (self:GetController():GetPos() - self:GetPos()):GetNormalized() * 500
@@ -83,10 +81,24 @@ function ENT:OnRemove()
     local owner = self:GetOwner()
 
     if SERVER then
+        local tr = util.TraceHull({
+            startpos = self:GetPos(),
+            endpos = self:GetPos(),
+            filter = {self, self:GetOwner()},
+            mins = Vector(-16, -16, 0),
+            maxs = Vector(16, 16, 72),
+        })
+
         if IsValid(owner) then
             local angles = owner:EyeAngles()
             owner:SetParent(nil)
-            owner:SetPos(self:GetPos())
+            if (tr.HitWorld) then
+                local target = DarkRP.findEmptyPos(self:GetPos(), {self, owner}, 64, 8, Vector(16, 16, 72))
+                MsgN("We are stuck in world")
+                owner:SetPos(target)
+            else
+                owner:SetPos(self:GetPos())
+            end
             angles.r = 0
             angles.p = 0
             owner:SetEyeAngles(angles)
@@ -114,6 +126,7 @@ end
 function ENT:Setup(ply)
     self:SetDistance(ply:GetShootPos():Distance(self:GetTarget()))
     self:SetWeapon(ply:GetActiveWeapon())
+
     if SERVER then
         ply:SetEyeAngles(self:WorldToLocalAngles(ply:EyeAngles()))
         ply:SetParent(self)
@@ -121,6 +134,7 @@ function ENT:Setup(ply)
         controller:SetModel("models/weapons/c_models/c_grapple_proj/c_grapple_proj.mdl")
         controller:SetPos(self:GetTarget() + self.Normal * -4)
         controller:SetAngles(self.Normal:Angle())
+        controller:PhysicsInit(SOLID_NONE)
         controller:Spawn()
         self:SetController(controller)
     end

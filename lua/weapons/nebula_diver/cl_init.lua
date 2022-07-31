@@ -29,7 +29,11 @@ function SWEP:Initialize()
     self.VElements.v_element.color = self.Tint or color_white
     self.WElements.w_element.color = self.Tint or color_white
     BaseClass.Initialize( self )
-    hook.Add("CalcView", self, self.CalcView)
+    hook.Add("CalcView", self, function(s, ply, pos, angles, fov)
+        if (ply == s:GetOwner()) then
+            self:CalcView(ply, pos, angles, fov)
+        end
+    end)
 
     hook.Add("PlayerButtonDown", self, function(s, ply, btn)
         if not IsFirstTimePredicted() then return end
@@ -119,6 +123,7 @@ end
 function SWEP:DrawRope(pos)
     local maxRopes = self.TrajectoryIndex
     local pivot = self:GetController():GetController()
+    if not IsValid(pivot) then return end
 
     for k, v in pairs(self.LerpedRope) do
         local power = (k - 1) / maxRopes
