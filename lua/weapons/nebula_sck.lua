@@ -1,6 +1,7 @@
 AddCSLuaFile()
 
 function SWEP:Initialize()
+    self:SetHoldType(self.HoldType or "normal")
     -- other initialize code goes here
     if CLIENT then
         -- Create a new table for every weapon instance

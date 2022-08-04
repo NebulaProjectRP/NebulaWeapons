@@ -8,6 +8,7 @@ SWEP.UseHands = true
 SWEP.UnitsPerTick = 112
 SWEP.IsDiver = true
 DEFINE_BASECLASS("nebula_sck")
+SWEP.HoldType = "revolver"
 
 
 function SWEP:SetupDataTables()

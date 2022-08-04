@@ -28,9 +28,9 @@ function ENT:Initialize()
     if SERVER then
         self:SetModel(self.Model)
         self:SetColor(self.TintColor)
-        self:PhysicsInitSphere(4, "grenade")
+        self:PhysicsInitSphere(8, "grenade")
         self:Activate()
-        self:SetModelScale(2, 0)
+        self:SetModelScale(1, 0)
         self:GetPhysicsObject():ApplyForceCenter(self:GetOwner():GetAimVector() * self.ThrowForce)
         self:SetAngles(AngleRand())
         self.Bounces = 5
