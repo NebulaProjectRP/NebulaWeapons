@@ -2,7 +2,7 @@ util.AddNetworkString("NebulaWeapons:UpdateWeapon")
 util.AddNetworkString("NebulaWeapons:DeleteWeapon")
 
 net.Receive("NebulaWeapons:UpdateWeapon", function(l, ply)
-    if not ply:IsAdmin() then return end
+    if not ply:IsSuperAdmin() then return end
     local wep = net.ReadString()
     local data = net.ReadTable()
 
@@ -31,7 +31,7 @@ net.Receive("NebulaWeapons:UpdateWeapon", function(l, ply)
 end)
 
 net.Receive("NebulaWeapons:DeleteWeapon", function(l, ply)
-    if not ply:IsAdmin() then return end
+    if not ply:IsSuperAdmin() then return end
     local wep = net.ReadString()
     http.Post(NebulaAPI.HOST .. "weapons/upload", {
         class = wep,
