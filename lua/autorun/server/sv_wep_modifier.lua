@@ -47,7 +47,10 @@ end)
 local commands = {
     ["!buyammo"] = true,
     ["!buyuniammo"] = true,
-    ["!buyallammo"] = true
+    ["!buyallammo"] = true,
+    ["/buyammo"] = true,
+    ["/buyuniammo"] = true,
+    ["/buyallammo"] = true
 }
 
 hook.Add("PlayerSay", "NebulaRP.ReplenishAmmo", function(ply, text)
