@@ -43,3 +43,24 @@ net.Receive("NebulaWeapons:DeleteWeapon", function(l, ply)
         authorization = NebulaAPI.API_KEY
     })
 end)
+
+local commands = {
+    ["!buyammo"] = true,
+    ["!buyuniammo"] = true,
+    ["!buyallammo"] = true
+}
+
+hook.Add("PlayerSay", "NebulaRP.ReplenishAmmo", function(ply, text)
+    if (commands[text]) then
+        local types = {}
+        for k, v in pairs(ply:GetWeapons()) do
+            if (v.IsTFA and not types[v.Primary.Ammo]) then
+                types[v.Primary.Ammo] = true
+                ply:GiveAmmo(100, v.Primary.Ammo)
+            end
+        end
+        ply:addMoney(-1000)
+        ply:PrintMessage(HUD_PRINTTALK, "You bought ammo for all your weapons!")
+        return ""
+    end
+end)
