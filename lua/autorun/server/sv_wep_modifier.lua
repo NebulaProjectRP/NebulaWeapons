@@ -54,7 +54,7 @@ hook.Add("PlayerSay", "NebulaRP.ReplenishAmmo", function(ply, text)
     if (commands[text]) then
         local types = {}
         for k, v in pairs(ply:GetWeapons()) do
-            if (v.IsTFA and not types[v.Primary.Ammo]) then
+            if (v.Primary and not types[v.Primary.Ammo]) then
                 types[v.Primary.Ammo] = true
                 ply:GiveAmmo(100, v.Primary.Ammo)
             end
