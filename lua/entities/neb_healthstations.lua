@@ -39,8 +39,11 @@ function ENT:Initialize()
 end
 
 function ENT:Use(act)
-    if (act.machinecooldown or 0) > CurTime() then return end
-    act.machinecooldown = CurTime() + 1
+    if (act.machinecooldown or 0) > CurTime() then
+        DarkRP.notify(act, 1, 4, "You must wait " .. math.ceil(act.machinecooldown - CurTime()) .. " seconds before using this machine again.")
+        return
+    end
+    act.machinecooldown = CurTime() + 30
 
     if act:Health() >= act:GetMaxHealth() and act:Armor() >= act:GetMaxArmor() then
         self:EmitSound("nebularp/duck_pickup_neg_01.wav")
