@@ -34,7 +34,7 @@ net.Receive("NebulaWeapons:DeleteWeapon", function(l, ply)
     if not ply:IsSuperAdmin() then return end
     local wep = net.ReadString()
 
-    http.Post(NebulaAPI.HOST .. "weapons/upload", {
+    http.Post(NebulaAPI.HOST .. "weapons/delete", {
         class = wep,
     }, function(res)
         MsgN("Weapon " .. wep .. " has been deleted")
