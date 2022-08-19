@@ -9,7 +9,7 @@ ENT.AdminSpawnable	= false
 
 ENT.MyModel = "models/weapons/tfa_cso/w_block_missile.mdl"
 ENT.MyModelScale = 1
-ENT.Damage = 500
+ENT.Damage = 0
 ENT.Radius = 450
 if SERVER then
 
