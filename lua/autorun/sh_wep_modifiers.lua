@@ -10,7 +10,7 @@ function NebulaWeapons:Load()
         for class, info in pairs(data) do
             local wep = weapons.GetStored(class)
 
-            NebulaWeapons.Cache[wep] = wep
+            NebulaWeapons.Cache[wep] = table.Copy(wep)
 
             for key, val in pairs(info) do
                 if istable(val) then
