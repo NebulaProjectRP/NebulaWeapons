@@ -105,7 +105,12 @@ end
 function PANEL:WriteFields(id)
     local filter = self.Search:GetText()
     self.Main:GetCanvas():Clear()
-    for k, v in pairs(weapons.GetStored(id)) do
+
+    local data = weapons.GetStored(id)
+
+    if not data then return end
+
+    for k, v in pairs(data) do
         if (filter and filter != "" and not string.find(string.lower(k), string.lower(filter))) then continue end
 
         if not self.Changes[k] then
