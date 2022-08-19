@@ -21,8 +21,7 @@ net.Receive("NebulaWeapons:UpdateWeapon", function(l, ply)
         class = wep,
         data = util.TableToJSON(data)
     }, function(res)
-        MsgN(res)
-        MsgN("Weapon " .. wep .. " has been updated")
+        MsgN("[Nebula] Weapon " .. wep .. " has been updated.")
         net.Start("NebulaWeapons:UpdateWeapon")
         net.Broadcast()
     end, function(err) end, {
@@ -37,7 +36,7 @@ net.Receive("NebulaWeapons:DeleteWeapon", function(l, ply)
     http.Post(NebulaAPI.HOST .. "weapons/delete", {
         class = wep,
     }, function(res)
-        MsgN("Weapon " .. wep .. " has been deleted")
+        MsgN("[Nebula] Weapon " .. wep .. " has been deleted.")
         net.Start("NebulaWeapons:UpdateWeapon")
         net.Broadcast()
     end, function(err) end, {
