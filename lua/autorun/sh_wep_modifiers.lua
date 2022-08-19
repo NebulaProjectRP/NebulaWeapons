@@ -1,12 +1,16 @@
 NebulaWeapons = NebulaWeapons or {}
 
-function NebulaWeapons:Update()
+NebulaWeapons.Cache = {}
+
+function NebulaWeapons:Load()
     http.Fetch(NebulaAPI.HOST .. "weapons/fetch", function(body)
         local data = util.JSONToTable(body)
         if not data then return end
 
         for class, info in pairs(data) do
             local wep = weapons.GetStored(class)
+
+            NebulaWeapons.Cache[wep] = wep
 
             for key, val in pairs(info) do
                 if istable(val) then
@@ -25,9 +29,9 @@ function NebulaWeapons:Update()
 end
 
 hook.Add("InitPostEntity", "NebulaWeapons:Register", function(swep, class)
-    NebulaWeapons:Update()
+    NebulaWeapons:Load()
 end)
 
 net.Receive("NebulaWeapons:UpdateWeapon", function()
-    NebulaWeapons:Update()
+    NebulaWeapons:Load()
 end)

@@ -1,10 +1,14 @@
 util.AddNetworkString("NebulaWeapons:UpdateWeapon")
 util.AddNetworkString("NebulaWeapons:DeleteWeapon")
 
+-- Net
+
 net.Receive("NebulaWeapons:UpdateWeapon", function(l, ply)
     if not ply:IsSuperAdmin() then return end
+
     local wep = net.ReadString()
     local data = net.ReadTable()
+
     local wepTable = weapons.GetStored(wep)
 
     for k, v in pairs(data) do
@@ -21,9 +25,10 @@ net.Receive("NebulaWeapons:UpdateWeapon", function(l, ply)
         class = wep,
         data = util.TableToJSON(data)
     }, function(res)
-        MsgN("[Nebula] Weapon " .. wep .. " has been updated.")
         net.Start("NebulaWeapons:UpdateWeapon")
         net.Broadcast()
+
+        MsgN("[Nebula] Weapon " .. wep .. " has been updated.")
     end, function(err) end, {
         authorization = NebulaAPI.API_KEY
     })
@@ -31,14 +36,19 @@ end)
 
 net.Receive("NebulaWeapons:DeleteWeapon", function(l, ply)
     if not ply:IsSuperAdmin() then return end
+
     local wep = net.ReadString()
 
     http.Post(NebulaAPI.HOST .. "weapons/delete", {
         class = wep,
     }, function(res)
-        MsgN("[Nebula] Weapon " .. wep .. " has been deleted.")
+        local wepTable = weapons.GetStored(wep)
+        wepTable = NebulaWeapons.Cache[wep] or wepTable
+
         net.Start("NebulaWeapons:UpdateWeapon")
         net.Broadcast()
+
+        MsgN("[Nebula] Weapon " .. wep .. " has been reset.")
     end, function(err) end, {
         authorization = NebulaAPI.API_KEY
     })
