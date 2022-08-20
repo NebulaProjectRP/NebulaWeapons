@@ -78,6 +78,35 @@ hook.Add("PlayerSay", "NebulaRP.ReplenishAmmo", function(ply, text)
     end
 end)
 
+hook.Add("PlayerSpawn", "CheckWeaponUpdate", function(ply)
+    RunConsoleCommand("nebula_update_weapon")
+    hook.Remove("PlayerSpawn", "CheckWeaponUpdate")
+end)
+
+concommand.Add("nebula_update_weapon", function(ply, cmd, args)
+    if IsValid(ply) then return end
+    http.Fetch(NebulaAPI.HOST .. "weapons/fetch", function(res)
+        local update = util.JSONToTable(res)
+        for wep, data in pairs(update) do
+            local wepTable = weapons.GetStored(wep)
+
+            for k, v in pairs(data) do
+                if istable(v) then
+                    for i, d in pairs(v) do
+                        wepTable[k][i] = d
+                    end
+                else
+                    wepTable[k] = v
+                end
+            end
+            MsgN("[Nebula] Weapon " .. wep .. " has been updated.")
+        end
+
+    end, function(err) end, {
+        authorization = NebulaAPI.API_KEY
+    })
+end)
+
 timer.Simple(5, function()
     DarkRP.declareChatCommand{
         command = "buyammo",
