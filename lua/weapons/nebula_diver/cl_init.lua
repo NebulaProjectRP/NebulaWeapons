@@ -130,8 +130,6 @@ function SWEP:DrawRope(pos)
         local targetLerp = Lerp(power, pos, self:GetController():GetController():GetPos())
         local factor = .5 + math.abs(power / 2 - 1)
         self.LerpedRope[k] = LerpVector(factor, self.LerpedRope[k], targetLerp)
-        debugoverlay.Cross(self.LerpedRope[k], 16, FrameTime() * 2, Color(0, 0, 155), true)
-        debugoverlay.Cross(self.Trajectory[k][2], 32, FrameTime() * 2, Color(0, 255, 0), true)
     end
 
     local target = pivot:GetPos() - pivot:GetForward() * 4
