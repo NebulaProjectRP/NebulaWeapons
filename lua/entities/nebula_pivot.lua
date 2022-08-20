@@ -85,16 +85,15 @@ function ENT:OnRemove()
             startpos = self:GetPos(),
             endpos = self:GetPos(),
             filter = {self, self:GetOwner()},
-            mins = Vector(-16, -16, 0),
-            maxs = Vector(16, 16, 72),
+            mins = Vector(-32, -32, 0),
+            maxs = Vector(32, 32, 72),
         })
 
         if IsValid(owner) then
             local angles = owner:EyeAngles()
             owner:SetParent(nil)
             if (tr.HitWorld) then
-                local target = DarkRP.findEmptyPos(self:GetPos(), {self, owner}, 64, 8, Vector(16, 16, 72))
-                MsgN("We are stuck in world")
+                local target = DarkRP.findEmptyPos(self:GetPos() + (self.Push or Vector(0, 0, 0)), {self, owner}, 72, 16, Vector(64, 64, 72))
                 owner:SetPos(target)
             else
                 owner:SetPos(self:GetPos())
@@ -102,6 +101,9 @@ function ENT:OnRemove()
             angles.r = 0
             angles.p = 0
             owner:SetEyeAngles(angles)
+            if (self.Push) then
+                owner:SetPos(owner:GetPos() + self.Push)
+            end
         end
 
         if self:GetWeapon().loopingCue then
@@ -166,19 +168,19 @@ function ENT:PhysicsSimulate(phys, deltatime)
     self.ShadowParams.pos = self:CalculatePosition()
     self.ShadowParams.angle = self:CalculateAngle()
     self.ShadowParams.deltatime = deltatime
-    debugoverlay.Cross(self.ShadowParams.pos, 5, FrameTime() * 4, Color(255, 0, 0), true)
     phys:ComputeShadowControl(self.ShadowParams)
 
     local tr = util.TraceHull({
-        start = self:GetPos() + Vector(0, 0, 2),
+        start = self:GetPos() + Vector(0, 0, 0),
         endpos = self:GetPos() + Vector(0, 0, 2),
-        mins = -Vector(24, 24, 0),
-        maxs = Vector(24, 24, 96),
+        mins = -Vector(32, 32, 0),
+        maxs = Vector(32, 32, 96),
         filter = {self, self:GetController(), self:GetOwner()},
     })
 
     if not self.Disposed and tr.HitWorld then
         self.Disposed = true
+        self.Push = (tr.HitPos - self:GetOwner():GetPos()):GetNormalized() * -16
         self:GetWeapon():Reload()
     end
 end
