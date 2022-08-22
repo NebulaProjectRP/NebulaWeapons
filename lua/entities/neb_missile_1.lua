@@ -6,8 +6,9 @@ ENT.Spawnable = false
 ENT.AdminSpawnable = false
 ENT.MyModel = "models/weapons/tfa_cso/w_tank_missile.mdl"
 ENT.MyModelScale = 1
-ENT.Damage = 80
-ENT.Radius = 200
+ENT.Damage = 75
+ENT.Radius = 150
+ENT.IsRocket = true
 
 if SERVER then
     AddCSLuaFile()
@@ -35,7 +36,7 @@ if SERVER then
     function ENT:PhysicsCollide(data, physobj)
         local owent = self.Owner and self.Owner or self
         local filter = {}
-        for k, v in pairs(ents.FindInSphere(self:GetPos(), self.Radius)) do
+        for k, v in pairs(ents.FindInSphere(self:GetPos(), self.Radius / 2)) do
             if !v:IsPlayer() or filter[v] then continue end
             filter[v] = true
             local dmg = DamageInfo()
@@ -54,6 +55,14 @@ if SERVER then
     end
 end
 
+hook.Add("EntityTakeDamage", "Nebula.FixupDamage", function(ply, dmg)
+    local inf = dmg:GetInflictor()
+    if (inf.IsRocket and dmg:GetDamageType() != DMG_BLAST) then
+        dmg:SetDamage(0)
+        return true
+    end
+end)
+
 if CLIENT then
     function ENT:Draw()
         self:DrawModel()
@@ -62,15 +71,15 @@ end
 
 local ENT2 = table.Copy(ENT)
 ENT2.Base = "neb_missile_1"
-ENT2.Damage = 125
-ENT2.Radius = 200
+ENT2.Damage = 100
+ENT2.Radius = 125
 
 scripted_ents.Register(ENT2, "neb_missile_2")
 
 local ENT3 = table.Copy(ENT)
 ENT3.Base = "neb_missile_1"
-ENT3.Damage = 400
-ENT3.Radius = 200
+ENT3.Damage = 250
+ENT3.Radius = 175
 ENT3.MyModel = "models/weapons/tfa_cso/w_tank_missile.mdl"
 
 scripted_ents.Register(ENT3, "neb_missile_3")
