@@ -55,8 +55,16 @@ if SERVER then
     end
 end
 
+local noDamage = {
+    ["tank_missile"] = true
+}
+
 hook.Add("EntityTakeDamage", "Nebula.FixupDamage", function(ply, dmg)
     local inf = dmg:GetInflictor()
+    if (noDamage[inf:GetClass()]) then
+        dmg:SetDamage(math.Clamp(dmg:GetDamage(), 0, ply:Health() * .3))
+        return true
+    end
     if (inf.IsRocket) then
         dmg:SetDamage(math.Clamp(inf.Damage, 0, 300))
         return true
