@@ -57,8 +57,8 @@ end
 
 hook.Add("EntityTakeDamage", "Nebula.FixupDamage", function(ply, dmg)
     local inf = dmg:GetInflictor()
-    if (inf.IsRocket and dmg:GetDamageType() != DMG_BLAST) then
-        dmg:SetDamage(0)
+    if (inf.IsRocket) then
+        dmg:SetDamage(math.Clamp(inf.Damage, 0, 300))
         return true
     end
 end)
@@ -83,4 +83,11 @@ ENT3.Radius = 175
 ENT3.MyModel = "models/weapons/tfa_cso/w_tank_missile.mdl"
 
 scripted_ents.Register(ENT3, "neb_missile_3")
+
+local ENT3 = table.Copy(ENT)
+ENT3.Base = "neb_missile_1"
+ENT3.Damage = 150
+ENT3.Radius = 150
+
+scripted_ents.Register(ENT3, "neb_missile_4")
 

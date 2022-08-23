@@ -1,3 +1,4 @@
+
 SWEP.Base				= "tfa_gun_base"
 SWEP.Category				= "TFA CS:O" --The category.  Please, just choose something generic or something I've already done if you plan on only doing like one swep.
 SWEP.Author				= "Kamikaze" --Author Tooltip
@@ -7,7 +8,7 @@ SWEP.Instructions				= "" --Instructions Tooltip
 SWEP.Spawnable				= true --Can you, as a normal user, spawn this?
 SWEP.AdminSpawnable			= true --Can an adminstrator spawn this?  Does not tie into your admin mod necessarily, unless its coded to allow for GMod's default ranks somewhere in its code.  Evolve and ULX should work, but try to use weapon restriction rather than these.
 SWEP.DrawCrosshair			= true		-- Draw the crosshair?
-SWEP.PrintName				= "Brick Piece S1451 (B Mode)"		-- Weapon name (Shown on HUD)
+SWEP.PrintName				= "Brick Piece T50 (B Mode)"		-- Weapon name (Shown on HUD)
 SWEP.Slot				= 4				-- Slot in the weapon selection menu.  Subtract 1, as this starts at 0.
 SWEP.SlotPos				= 73			-- Position in the slot
 SWEP.DrawAmmo				= true		-- Should draw the default HL2 ammo counter if enabled in the GUI.
@@ -20,20 +21,20 @@ SWEP.Weight				= 30			-- This controls how "good" the weapon is for autopickup.
 --[[WEAPON HANDLING]]--
 
 --Firing related
-SWEP.Primary.Sound 			= Sound("KATYUSHA.Fire")				-- This is the sound of the weapon, when you shoot.
-SWEP.Primary.Damage		= 75					-- Damage, in standard damage points.
+SWEP.Primary.Sound 			= Sound("TANK.Fire")				-- This is the sound of the weapon, when you shoot.
+SWEP.Primary.Damage		= 225					-- Damage, in standard damage points.
 SWEP.DamageType = DMG_BULLET --See DMG enum.  This might be DMG_SHOCK, DMG_BURN, DMG_BULLET, etc.
 SWEP.Primary.NumShots	= 1 --The number of shots the weapon fires.  SWEP.Shotgun is NOT required for this to be >1.
 SWEP.Primary.Automatic			= false					-- Automatic/Semi Auto
-SWEP.Primary.RPM				= 60					-- This is in Rounds Per Minute / RPM
-SWEP.Primary.RPM_Semi				= 60					-- RPM for semi-automatic or burst fire.  This is in Rounds Per Minute / RPM
+SWEP.Primary.RPM				= 15					-- This is in Rounds Per Minute / RPM
+SWEP.Primary.RPM_Semi				= 15					-- RPM for semi-automatic or burst fire.  This is in Rounds Per Minute / RPM
 SWEP.FiresUnderwater = false
 
 -- nZombies Stuff
 SWEP.NZWonderWeapon		= false	-- Is this a Wonder-Weapon? If true, only one player can have it at a time. Cheats aren't stopped, though.
 --SWEP.NZRePaPText		= "your text here"	-- When RePaPing, what should be shown? Example: Press E to your text here for 2000 points.
-SWEP.NZPaPName				= "ALLAH AKBAR!"
---SWEP.NZPaPReplacement 	= "tfa_cso_rpg7_v6"	-- If Pack-a-Punched, replace this gun with the entity class shown here.
+SWEP.NZPaPName				= "Putanginamal"
+SWEP.NZPaPReplacement 	= "tfa_cso_t50"	-- If Pack-a-Punched, replace this gun with the entity class shown here.
 SWEP.NZPreventBox		= true	-- If true, this gun won't be placed in random boxes GENERATED. Users can still place it in manually.
 SWEP.NZTotalBlackList	= false	-- if true, this gun can't be placed in the box, even manually, and can't be bought off a wall, even if placed manually. Only code can give this gun.
 
@@ -46,24 +47,23 @@ SWEP.DefaultFireMode 	= "" --Default to auto or whatev
 
 --Ammo Related
 
-SWEP.Primary.ClipSize			= 6					-- This is the size of a clip
-SWEP.Primary.AmmoConsumption = 3 --Ammo consumed per shot
-SWEP.Primary.DefaultClip			= 36				-- This is the number of bullets the gun gives you, counting a clip as defined directly above.
+SWEP.Primary.ClipSize			= -1					-- This is the size of a clip
+SWEP.Primary.DefaultClip			= 11				-- This is the number of bullets the gun gives you, counting a clip as defined directly above.
 SWEP.Primary.Ammo			= "slam"					-- What kind of ammo.  Options, besides custom, include pistol, 357, smg1, ar2, buckshot, slam, SniperPenetratedRound, and AirboatGun.
 --Pistol, buckshot, and slam like to ricochet. Use AirboatGun for a light metal peircing shotgun pellets
 
 SWEP.DisableChambering = true --Disable round-in-the-chamber
 
 --Recoil Related
-SWEP.Primary.KickUp			= 0.75					-- This is the maximum upwards recoil (rise)
-SWEP.Primary.KickDown			= 0.2					-- This is the maximum downwards recoil (skeet)
-SWEP.Primary.KickHorizontal			= 0.25					-- This is the maximum sideways recoil (no real term)
+SWEP.Primary.KickUp			= 0.3					-- This is the maximum upwards recoil (rise)
+SWEP.Primary.KickDown			= 0.1					-- This is the maximum downwards recoil (skeet)
+SWEP.Primary.KickHorizontal			= 0.2					-- This is the maximum sideways recoil (no real term)
 SWEP.Primary.StaticRecoilFactor = 0.6 	--Amount of recoil to directly apply to EyeAngles.  Enter what fraction or percentage (in decimal form) you want.  This is also affected by a convar that defaults to 0.5.
 
 --Firing Cone Related
 
-SWEP.Primary.Spread		= .03					--This is hip-fire acuracy.  Less is more (1 is horribly awful, .0001 is close to perfect)
-SWEP.Primary.IronAccuracy = .03	-- Ironsight accuracy, should be the same for shotguns
+SWEP.Primary.Spread		= .04					--This is hip-fire acuracy.  Less is more (1 is horribly awful, .0001 is close to perfect)
+SWEP.Primary.IronAccuracy = .0275	-- Ironsight accuracy, should be the same for shotguns
 
 --Unless you can do this manually, autodetect it.  If you decide to manually do these, uncomment this block and remove this line.
 --SWEP.Primary.SpreadMultiplierMax = 2.5 --How far the spread can expand when you shoot.
@@ -99,13 +99,13 @@ SWEP.SprintFOVOffset = 3.75 --Add this onto the FOV when we're sprinting.
 
 --[[PROJECTILES]]--
 
-SWEP.ProjectileEntity = "neb_missile_2" --Entity to shoot
-SWEP.ProjectileVelocity = 4800 --Entity to shoot's velocity
-SWEP.ProjectileModel = "models/weapons/tfa_cso/w_missile_v7.mdl" --Entity to shoot's model
+SWEP.ProjectileEntity = "neb_missile_3" --Entity to shoot
+SWEP.ProjectileVelocity = 9600 --Entity to shoot's velocity
+SWEP.ProjectileModel = "models/weapons/tfa_cso/w_tank_missile.mdl" --Entity to shoot's model
 
 --[[VIEWMODEL]]--
 
-SWEP.ViewModel			= "models/weapons/tfa_cso/c_katyusha.mdl" --Viewmodel path
+SWEP.ViewModel			= "models/weapons/tfa_cso/c_tank.mdl" --Viewmodel path
 SWEP.ViewModelFOV			= 80		-- This controls how big the viewmodel looks.  Less is more.
 SWEP.ViewModelFlip			= true		-- Set this to true for CSS models, or false for everything else (with a righthanded viewmodel.)
 SWEP.UseHands = true --Use gmod c_arms system.
@@ -114,7 +114,7 @@ SWEP.VMAng = Vector(0,0,0) --The viewmodel angular offset, constantly.   Subtrac
 
 --[[WORLDMODEL]]--
 
-SWEP.WorldModel			= "models/weapons/tfa_cso/w_katyusha.mdl" -- Weapon world model path
+SWEP.WorldModel			= "models/weapons/tfa_cso/w_tank.mdl" -- Weapon world model path
 
 SWEP.HoldType 				= "smg"		-- This is how others view you carrying the weapon. Options include:
 -- normal melee melee2 fist knife smg ar2 pistol rpg physgun grenade shotgun crossbow slam passive
@@ -123,8 +123,8 @@ SWEP.HoldType 				= "smg"		-- This is how others view you carrying the weapon. O
 SWEP.Offset = { --Procedural world model animation, defaulted for CS:S purposes.
 		Pos = {
 		Up = -5.65,
-		Right = 1.5,
-		Forward = 11,
+		Right = 2.5,
+		Forward = 6,
 		},
 		Ang = {
 		Up = -90,
@@ -171,10 +171,10 @@ SWEP.RunSightsAng = Vector(-16.223, -35.562, 0)
 
 SWEP.data 				= {}
 SWEP.data.ironsights			= 0 --Enable Ironsights
-SWEP.Secondary.IronFOV			= 60					-- How much you 'zoom' in. Less is more!  Don't have this be <= 0.  A good value for ironsights is like 70.
+SWEP.Secondary.IronFOV			= 65					-- How much you 'zoom' in. Less is more!  Don't have this be <= 0.  A good value for ironsights is like 70.
 
-SWEP.IronSightsPos = Vector(6.38, -2.31, -3.366)
-SWEP.IronSightsAng = Vector(19.04, 10.236, -8.197)
+SWEP.IronSightsPos = Vector(6.744, 0.698, -1.53)
+SWEP.IronSightsAng = Vector(-0.071, 0, 3.372)
 
 --[[INSPECTION]]--
 
@@ -376,11 +376,11 @@ SWEP.Base				= "tfa_gun_base"
 
 DEFINE_BASECLASS(SWEP.Base)
 function SWEP:Holster( ... )
-	self:StopSound("KATYUSHA.Idle")
-	self:StopSound("KATYUSHA.Idle2")
+	self:StopSound("TANK.Idle")
+	self:StopSound("TANK.Idle2")
 	return BaseClass.Holster(self,...)
 end
 if CLIENT then
-	--SWEP.WepSelectIconCSO = Material("vgui/killicons/tfa_cso_katyusha")
+	--SWEP.WepSelectIconCSO = Material("vgui/killicons/tfa_cso_tank")
 	SWEP.DrawWeaponSelection = TFA_CSO_DrawWeaponSelection
 end

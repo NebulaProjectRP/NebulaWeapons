@@ -29,7 +29,9 @@ function NebulaWeapons:Load()
 end
 
 hook.Add("InitPostEntity", "NebulaWeapons:Register", function(swep, class)
-    NebulaWeapons:Load()
+    timer.Simple(10, function()
+        NebulaWeapons:Load()
+    end)
 end)
 
 net.Receive("NebulaWeapons:UpdateWeapon", function()
