@@ -195,6 +195,8 @@ function ENT:Draw()
         net.WriteEntity(self)
         net.WriteUInt(self.OptionSelected, 2)
         net.SendToServer()
+    elseif (eWasPressed and not input.IsKeyDown(KEY_E)) then
+        eWasPressed = false
     end
 
     cam.Start3D2D(pos, ang, .1)
@@ -223,6 +225,9 @@ function ENT:Draw()
     cam.End3D2D()
 
     if IsValid(self.Model) then
+        if (self.Model:GetParent() != self) then
+            self.Model:SetParent(self)
+        end
         render.SuppressEngineLighting(true)
         self.Model:DrawModel()
         render.SuppressEngineLighting(false)
