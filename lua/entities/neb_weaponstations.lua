@@ -37,17 +37,16 @@ function ENT:SetupDataTables()
     })
     self:NetworkVar("Int", 0, "Price", {
         KeyName = "price",
-        Edit = {type = "Int", category = "Weapon Station", order = 2, min = 10, max = 1000}
+        Edit = {type = "Int", category = "Weapon Station", order = 2, min = 10000, max = 50000}
     })
     self:NetworkVar("Int", 1, "Credits", {
         KeyName = "credits",
-        Edit = {type = "Int", category = "Weapon Station", order = 3, min = 10000, max = 100000}
+        Edit = {type = "Int", category = "Weapon Station", order = 3, min = 10, max = 1000}
     })
 
     self:NetworkVarNotify("WeaponClass", function(s, name, old, new)
         self.CacheText = nil
         self.CacheSize = nil
-        MsgN("Do Update")
     end)
 end
 
