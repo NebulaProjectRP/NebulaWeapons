@@ -87,7 +87,7 @@ function ENT:DoPurchase(ply, option)
         ply:addMoney(-self:GetPrice())
     end
 
-    if (option == 2 and ply:getCredits() < self:GetCredits()) then
+    if (option == 2 and ply:getCredits() < self:GetCredits() and self:GetCredits() > 0) then
         DarkRP.notify(ply, 1, 5, "You can't afford this weapon with credits!")
         return
     elseif (option == 2) then
