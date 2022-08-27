@@ -126,6 +126,9 @@ function SWEP:Reload()
             end
             owner:SetFOV(0, self.TravelTime * .3)
         end)
+        self:Wait(10, function()
+            self:SetTarget(nil)
+        end)
     end
 end
 
@@ -183,6 +186,7 @@ end
 
 local lastProgress = 0
 function SWEP:UpdatePos()
+    if not IsValid(self:GetTarget()) then return end
     local progress = math.max(lastProgress, math.Clamp(1 - (self:GetTPStamp() - CurTime()) / self.TravelTime, 0, 1))
     lastProgress = progress
     self:GetOwner():SetPos(LerpVector(progress, self.origin, self:GetTarget():GetPos()))
