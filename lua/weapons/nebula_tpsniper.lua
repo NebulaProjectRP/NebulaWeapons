@@ -21,6 +21,7 @@ function SWEP:SetupDataTables()
     self:NetworkVar("Bool", 0, "DoingTP")
     self:NetworkVar("Bool", 1, "Zooming")
     self:NetworkVar("Entity", 1, "Target")
+    self:SetOxygen(0)
 
 end
 
