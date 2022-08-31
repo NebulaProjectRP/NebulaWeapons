@@ -37,20 +37,16 @@ function SWEP:DrawHUD()
         local modelName = string.sub(self.Aim:GetModel(), #self.PropBase + 1)
         for kind, res in pairs(self.Resolvers) do
             if (string.StartWith(modelName, kind)) then
-                //MsgN("Found model: " .. kind)
                 self.ModelAim = self.Aim:GetModel()
                 self.ModelInfo = res(modelName)
                 break
             end
         end
-        //self.ModelAnim = self.Aim:GetModel()
     end
 
     local tr = owner:GetEyeTrace()
 
     local origin = self.Aim:OBBCenter()
-    //MsgN(self.ModelInfo)
-    //MsgN(self.ModelInfo.x)
     local size = 24
     cam.Start3D()
     render.SetColorMaterial()
@@ -59,7 +55,6 @@ function SWEP:DrawHUD()
     local length = self.Aim:WorldToLocal(self.Aim:GetPos() + tr.HitNormal)
     local extra = self.Aim:LocalToWorld(self.Aim:OBBCenter() + length * self.ModelInfo * size)
     local hitLocal = self.Aim:WorldToLocal(extra)
-    MsgN(hitLocal)
 
     render.DrawSphere(realCenter, 2, 8, 8, faceColor.c)
     render.DrawLine(realCenter, self.Aim:LocalToWorld(hitLocal), color_white)

@@ -172,7 +172,6 @@ function PANEL:AddLine(field, v, line, parent)
         txt.OnValueChange = function(s, val)
             if (s.parent) then
                 self.Changes[s.parent][field] = isnumber(v) and tonumber(val) or val
-                MsgN("Table value")
             else
                 self.Changes[field] = isnumber(v) and tonumber(val) or val
             end

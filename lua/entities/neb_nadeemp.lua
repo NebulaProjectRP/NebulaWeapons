@@ -27,7 +27,6 @@ function ENT:Explode()
         self:callOnClient(RPC_PVS, "Explode")
 
         for k, v in pairs(ents.FindInSphere(self:GetPos(), 400)) do
-            MsgN(v:GetClass())
             if (v:GetClass() == "keypad") then
                 v:DamageBreak()
                 timer.Simple(5, function()

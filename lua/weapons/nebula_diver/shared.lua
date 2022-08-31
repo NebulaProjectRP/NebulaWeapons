@@ -162,7 +162,6 @@ function SWEP:StartAttack()
             end
         end)
 
-        --MsgN(self.TrajectoryIndex)
         lastTimer = lastTimer + 1
     end
 end
