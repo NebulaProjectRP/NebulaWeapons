@@ -107,7 +107,7 @@ function SWEP:Reload()
     if (self:GetTPStamp() > CurTime()) then return end
     if (self:Clip1() == 0) then return end
     self:SetTPStamp(CurTime() + self.TravelTime)
-    self:SetOxygen(CurTime() + self.Oxygen)
+    self:SetOxygen(CurTime() + 3)
     self:SetDoingTP(true)
 
     self:EmitSound("weapons/deadmanstale/deadmanstaleperk.wav")
