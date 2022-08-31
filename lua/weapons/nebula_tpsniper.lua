@@ -188,11 +188,9 @@ end
 local lastProgress = 0
 function SWEP:UpdatePos()
     if not IsValid(self:GetTarget()) then return end
-    local progress = math.max(lastProgress, math.Clamp(1 - (self:GetTPStamp() - CurTime()) / self.TravelTime, 0, 1))
-    lastProgress = progress
+    local progress = math.Clamp(1 - (self:GetTPStamp() - CurTime()) / self.TravelTime, 0, 1)
     self:GetOwner():SetPos(LerpVector(progress, self.origin or self:GetPos(), self:GetTarget():GetPos()))
-    if (progress == 1) then
-        lastProgress = 0
+    if (progress >= 1) then
         self:SetTarget(nil)
         self:SetDoingTP(false)
     end
