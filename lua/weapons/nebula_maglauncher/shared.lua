@@ -11,13 +11,13 @@ SWEP.ViewModelFlip = true
 SWEP.ViewModelFOV = 70
 
 SWEP.Primary = {}
-SWEP.Primary.ClipSize = 15
+SWEP.Primary.ClipSize = 30
 SWEP.Primary.DefaultClip = 200
 SWEP.Primary.Ammo = "357"
 SWEP.Primary.Automatic = true
-SWEP.Primary.Damage = 100
-SWEP.Primary.FireRate = 0.5
-SWEP.Primary.MissileFireRate = .5
+SWEP.Primary.Damage = 40
+SWEP.Primary.FireRate = 0.25
+SWEP.Primary.MissileFireRate = .4
 
 SWEP.DisableSkinGroups = false
 SWEP.WorldModelAngles = Angle(0, 100, 190)

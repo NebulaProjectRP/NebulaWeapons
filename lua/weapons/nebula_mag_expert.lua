@@ -11,9 +11,9 @@ SWEP.Primary.ClipSize = 30
 SWEP.Primary.DefaultClip = 250
 SWEP.Primary.Ammo = "357"
 SWEP.Primary.Automatic = true
-SWEP.Primary.Damage = 180
-SWEP.Primary.FireRate = 0.25
-SWEP.Primary.MissileFireRate = .7
+SWEP.Primary.Damage = 80
+SWEP.Primary.FireRate = 0.1
+SWEP.Primary.MissileFireRate = .5
 
 SWEP.WorldModelAngles = Angle(10, 10, 180)
 SWEP.OverheatExtra = .5
