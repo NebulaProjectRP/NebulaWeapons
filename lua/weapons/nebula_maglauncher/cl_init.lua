@@ -6,6 +6,10 @@ function SWEP:InitCL()
     self.Shadow:SetParent(self:GetOwner())
 end
 
+function SWEP:GetViewModelPosition(pos, ang)
+    return pos + ang:Right() * -3, ang + Angle(0, 6, 0)
+end
+
 local lwhite = Color(255, 255, 255, 25)
 local purple = Color(16, 0, 26, 200)
 local purple_opaque = Color(16, 0, 26)
@@ -99,7 +103,7 @@ function SWEP:DisplayEffects()
     local att = vm:GetAttachment(1)
     local ang = vm:GetAngles()
     local toremove
-    local origin = att.Pos + ang:Forward() * 32
+    local origin = att.Pos + ang:Forward() * 12 + ang:Right() * 3
 
     if self.FlareEvent then
         render.SetMaterial(flare_new)

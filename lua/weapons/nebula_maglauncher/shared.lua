@@ -8,16 +8,16 @@ SWEP.UseHands = true
 SWEP.ViewModel = "models/weapons/nebularp/c_magnum_lancer.mdl"
 SWEP.WorldModel = "models/weapons/tfa_cso/w_magnum_lancer.mdl"
 SWEP.ViewModelFlip = true
-SWEP.ViewModelFOV = 70
+SWEP.ViewModelFOV = 90
 
 SWEP.Primary = {}
-SWEP.Primary.ClipSize = 30
-SWEP.Primary.DefaultClip = 200
+SWEP.Primary.ClipSize = 25
+SWEP.Primary.DefaultClip = 250
 SWEP.Primary.Ammo = "357"
 SWEP.Primary.Automatic = true
 SWEP.Primary.Damage = 40
-SWEP.Primary.FireRate = 0.25
-SWEP.Primary.MissileFireRate = .4
+SWEP.Primary.FireRate = 0.3
+SWEP.Primary.MissileFireRate = .65
 
 SWEP.DisableSkinGroups = false
 SWEP.WorldModelAngles = Angle(0, 100, 190)
@@ -34,6 +34,7 @@ function SWEP:SetupDataTables()
     self:SetHeat(0)
 end
 
+
 function SWEP:Initialize()
     self:SetHoldType("shotgun")
     if SERVER then
@@ -47,6 +48,8 @@ function SWEP:PrimaryAttack()
     if not self:CanPrimaryAttack() then return end
     self:SendWeaponAnim(self:GetActive() and ACT_VM_THROW or ACT_VM_PRIMARYATTACK)
     self:GetOwner():SetAnimation(PLAYER_ATTACK1)
+
+    self:GetOwner():ViewPunch(Angle(self:GetActive() and -2 or -.5, 0, 0))
     if (self:GetActive()) then
         if SERVER then
             self:PerformAttack()

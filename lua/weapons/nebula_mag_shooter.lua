@@ -7,13 +7,13 @@ SWEP.WorldModel = "models/weapons/tfa_cso/w_magnum_shooter.mdl"
 SWEP.ViewModel = "models/weapons/nebularp/c_magnum_shooter.mdl"
 
 SWEP.Primary = {}
-SWEP.Primary.ClipSize = 20
-SWEP.Primary.DefaultClip = 200
+SWEP.Primary.ClipSize = 30
+SWEP.Primary.DefaultClip = 300
 SWEP.Primary.Ammo = "357"
 SWEP.Primary.Automatic = true
 SWEP.Primary.Damage = 65
-SWEP.Primary.FireRate = 0.2
-SWEP.Primary.MissileFireRate = .45
+SWEP.Primary.FireRate = 0.25
+SWEP.Primary.MissileFireRate = .6
 
 SWEP.WorldModelAngles = Angle(10, 10, 180)
 SWEP.DisableSkinGroups = true

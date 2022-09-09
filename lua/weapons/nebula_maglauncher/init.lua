@@ -13,7 +13,7 @@ end
 function SWEP:PerformAttack()
     local owner = self:GetOwner()
     local percent = self:Clip1() / self:GetMaxClip1()
-    owner:EmitSound(self:GetActive() and "weapons/tfa_cso/magnum_lancer/fire_2.wav" or "weapons/tfa_cso/magnum_lancer/fire.wav", 75, 100 + (1 - percent) * 20, 1, CHAN_WEAPON)
+    owner:EmitSound(self:GetActive() and "weapons/tfa_cso/magnum_lancer/fire_2.wav" or "weapons/tfa_cso/magnum_lancer/fire.wav", 75, 100 + (1 - percent) * 40, 1, CHAN_WEAPON)
     local num_bullets = self:GetActive() and self.MaxBeams or 1
     local heatAmount = 5
     for k = 0, num_bullets - 1 do
@@ -24,7 +24,7 @@ function SWEP:PerformAttack()
         local bullet = {
             Src = owner:GetShootPos(),
             Dir = dir,
-            Spread = Vector(0.01, 0.01, 0),
+            Spread = Vector(0.025, 0.025, 0),
             Num = 1,
             Tracer = 0,
             Force = 100,

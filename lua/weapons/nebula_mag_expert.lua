@@ -7,12 +7,12 @@ SWEP.WorldModel = "models/weapons/tfa_cso/w_magnumlauncher_gs18.mdl"
 SWEP.ViewModel = "models/weapons/nebularp/c_magnumlauncher_gs18.mdl"
 
 SWEP.Primary = {}
-SWEP.Primary.ClipSize = 30
-SWEP.Primary.DefaultClip = 250
+SWEP.Primary.ClipSize = 35
+SWEP.Primary.DefaultClip = 350
 SWEP.Primary.Ammo = "357"
 SWEP.Primary.Automatic = true
 SWEP.Primary.Damage = 80
-SWEP.Primary.FireRate = 0.1
+SWEP.Primary.FireRate = 0.15
 SWEP.Primary.MissileFireRate = .5
 
 SWEP.WorldModelAngles = Angle(10, 10, 180)
