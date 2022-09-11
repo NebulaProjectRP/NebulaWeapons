@@ -309,7 +309,7 @@ function ENT:StartTouch(entity)
             --			entity:SetLocalVelocity(self:getvel(self.target:GetPos(), entity:GetPos(), self.HightAdd))
         end
 
-        self:EmitSound(self:GetSoundName()) --"HV_Jump_pad_launch.wav" )
+        self:EmitSound("weapons/tractorcannonfire1.wav") --"HV_Jump_pad_launch.wav" )
         self:TriggerOutput("OnLaunch", self)
         numpad.Activate(self:GetPlayer(), self:GetKey(), true)
         self.LastLaunch = CurTime()
