@@ -4,6 +4,22 @@ function SWEP:InitCL()
     self.Shadow = ClientsideModel(self.WorldModel)
     self.Shadow:SetNoDraw(true)
     self.Shadow:SetParent(self:GetOwner())
+    self:InitMods()
+end
+
+function SWEP:InitMods()
+    if NebulaAcc.Trinkets and LocalPlayer():hasTrinket(self:GetClass()) then
+        local data = NebulaAcc.Trinkets[self:GetClass()]
+        if not data then return end
+        local model = NebulaInv.Items[LocalPlayer():hasTrinket(self:GetClass())].model
+        self.Trinket = ClientsideModel(model)
+        self.Trinket:SetParent(self:GetOwner():GetViewModel())
+        self.Trinket:SetNoDraw(true)
+
+        self:CallOnRemove("RemoveTrinket", function()
+            SafeRemoveEntity(self.Trinket)
+        end)
+    end
 end
 
 function SWEP:GetViewModelPosition(pos, ang)
@@ -96,6 +112,19 @@ function SWEP:PreDrawViewModel(vm, ply, wep)
     end
 
     self:DisplayEffects()
+end
+
+function SWEP:PostDrawViewModel(vm, ply, wep)
+    if IsValid(self.Trinket) then
+        local boneid = vm:LookupBone("sm_root")
+        local pos, ang = vm:GetBonePosition(boneid)
+        ang:RotateAroundAxis(ang:Up(), 110)
+        ang:RotateAroundAxis(ang:Forward(), 90)
+        pos = pos + ang:Forward() * 3 + ang:Up() * 1
+        self.Trinket:SetPos(pos)
+        self.Trinket:SetAngles(ang)
+        self.Trinket:DrawModel()
+    end
 end
 
 function SWEP:DisplayEffects()

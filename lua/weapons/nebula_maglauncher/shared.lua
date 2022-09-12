@@ -10,7 +10,6 @@ SWEP.WorldModel = "models/weapons/tfa_cso/w_magnum_lancer.mdl"
 SWEP.ViewModelFlip = true
 SWEP.ViewModelFOV = 90
 
-SWEP.Primary = {}
 SWEP.Primary.ClipSize = 25
 SWEP.Primary.DefaultClip = 250
 SWEP.Primary.Ammo = "357"
@@ -31,9 +30,7 @@ function SWEP:SetupDataTables()
     self:NetworkVar("Int", 0, "Heat")
     self:NetworkVar("Bool", 1, "Active")
     self:NetworkVar("Bool", 2, "Realoding")
-    self:SetHeat(0)
 end
-
 
 function SWEP:Initialize()
     self:SetHoldType("shotgun")

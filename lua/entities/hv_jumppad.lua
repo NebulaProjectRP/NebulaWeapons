@@ -187,15 +187,10 @@ function ENT:SpawnFunction(ply, tr, ClassName)
     ent:SetEnabled(true)
     --	ent:SetWorldModel("models/HighVoltage/UT2K4/PickUps/Jump_pad.mdl")
     ent:SetSoundName("HV_Jump_pad_launch.wav")
-    ent:SetEffectName("hv_jumppadfx")
+    ent:SetEffectName("hv_jumppadfxa")
     ply:AddCleanup("jumppads", ent)
 
     return ent
-end
-
-function ENT:OnPlayerChanged(var, old, new)
-    self:SetVar("FounderIndex", new:UniqueID())
-    self:SetNetworkedString("FounderName", new:Nick())
 end
 
 --[[
