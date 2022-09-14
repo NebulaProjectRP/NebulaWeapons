@@ -10,10 +10,11 @@ function EFFECT:Init( data )
 	self.velocity = data:GetStart()
 	self.angle = self.velocity:Angle()-- data:GetAngles()
 	self.jumppad = data:GetEntity()
+	self.DieTime = CurTime() + 0.3
+	if not IsValid(self.jumppad) then return end
 	self.color = Vector(255, 170, 0)
 		
 	self.Emitter = ParticleEmitter(self.pos)	
-	self.DieTime = CurTime() + 0.3
 	
 	debugoverlay.Line( self.pos, self.pos+self.angle:Forward()*100, 0.22, Color(255,0,0), true )
 	debugoverlay.Cross( self.pos+self.angle:Forward()*100, 4, 0.22, Color(0,255,0), true )
