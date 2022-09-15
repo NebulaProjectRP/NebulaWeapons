@@ -83,6 +83,30 @@ hook.Add("PlayerSpawn", "CheckWeaponUpdate", function(ply)
     hook.Remove("PlayerSpawn", "CheckWeaponUpdate")
 end)
 
+local ammoCages = {
+    ["models/mailer/bl2_props/banditammocrate.mdl"] = true,
+    ["models/mailer/bl2_props/dahlammocrate.mdl"] = true,
+}
+hook.Add("PlayerUse", "OnUseEntity", function(ply, ent)
+    if (ply.nextUse or 0) > CurTime() then return end
+
+    if ammoCages[ent:GetModel()] then
+        local types = {}
+
+        for k, v in pairs(ply:GetWeapons()) do
+            local ammoType = v:GetPrimaryAmmoType()
+            if (ply:GetAmmoCount(ammoType) > v:Clip1() * 5) then continue end
+            ply:GiveAmmo(v:Clip1() * 5, ammoType)
+        end
+
+        ply:PrintMessage(HUD_PRINTTALK, "<color=green>You picked up ammo for all your weapons!</color>")
+        ply:EmitSound("items/ammo_pickup.wav")
+        ply.nextUse = CurTime() + 5
+    else
+        ply.nextUse = CurTime() + 1
+    end
+end)
+
 concommand.Add("nebula_update_weapon", function(ply, cmd, args)
     if IsValid(ply) then return end
     http.Fetch(NebulaAPI.HOST .. "weapons/fetch", function(res)

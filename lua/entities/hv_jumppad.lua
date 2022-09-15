@@ -12,11 +12,11 @@ ENT.Editable = true
 
 function ENT:Initialize()
     if CLIENT then
-        hook.Add("PostDrawTranslucentRenderables", self, function()
+        hook.Add("PostDrawTranslucentRenderables", self, function(s)
             local ply = LocalPlayer()
 
             --	if (ply:Alive()) and (ply:GetActiveWeapon()) and (ply:GetActiveWeapon().GetMode) and (ply:GetActiveWeapon():GetMode() == "jumppad") and ply:GetActiveWeapon():GetNWEntity( "CurJumppad" ) != self then
-            if self:GetDrawPath() and ply == self:GetPlayer() then
+            if ply:GetEyeTrace().Entity == self or (IsValid(ply.TravelingEntity) and ply.TravelingEntity == self and ply.Traveling > 0) then
                 start = self:GetPos()
                 local targetpos = self:GetPos() --Vector(0,0,0)
                 local ent = nil
@@ -36,6 +36,15 @@ function ENT:Initialize()
                 local c = self:GetEffectColor() * 255
                 local color = Color(c.r, c.g, c.b, 255)
                 self:DrawJumpPadTarget(start, self:GetHeightAdd(), color, targetpos, Vector(0, 0, 1), ent)
+
+                if (ply.TravelingEntity == self) then
+                    ply.Traveling = ply.Traveling - FrameTime()
+                    if (ply.Traveling <= 0) then
+                        MsgN("No more traveling")
+                        ply.Traveling = nil
+                        ply.TravelingEntity = nil
+                    end
+                end
             end
         end)
 
@@ -185,7 +194,6 @@ function ENT:SpawnFunction(ply, tr, ClassName)
     ent:SetHeightAdd(1)
     ent:SetEffectColor(Vector(255, 170, 0) / 255)
     ent:SetEnabled(true)
-    --	ent:SetWorldModel("models/HighVoltage/UT2K4/PickUps/Jump_pad.mdl")
     ent:SetSoundName("HV_Jump_pad_launch.wav")
     ent:SetEffectName("hv_jumppadfxa")
     ply:AddCleanup("jumppads", ent)
@@ -221,7 +229,7 @@ function ENT:Think()
 
     self.LastEffect = self.LastEffect or 0
 
-    if CurTime() > self.LastEffect then
+    if false and CurTime() > self.LastEffect then
         self.LastEffect = CurTime() + 0.1
         if not self:GetEnabled() then return end -- Don't do anything if turned off
         local targetpos = self:GetPos() --Vector(0,0,0)
@@ -247,6 +255,7 @@ function ENT:Think()
         effectdata:SetEntity(self)
         --effectdata:SetNormal( col )
         util.Effect(self:GetEffectName(), effectdata) --"hv_jumppadfx"
+        
     end
 end
 
@@ -308,6 +317,10 @@ function ENT:StartTouch(entity)
         self:TriggerOutput("OnLaunch", self)
         numpad.Activate(self:GetPlayer(), self:GetKey(), true)
         self.LastLaunch = CurTime()
+        if entity:IsPlayer() then
+            entity:SendLua("LocalPlayer().Traveling = 2")
+            entity:SendLua("LocalPlayer().TravelingEntity = Entity(" .. self:EntIndex() .. ")")
+        end
 
         -- safe bet?
         if WireLib then
